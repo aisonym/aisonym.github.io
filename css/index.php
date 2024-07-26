@@ -9,7 +9,7 @@
     <meta name="description" content="Tim Palmer - Developing partner ecosystems | Former Managing Director Google Search Partnerships" />
     <meta name="keywords" content="Tim Palmer, Former MD Google" />
     <meta name="author" content="brain-coders" />
-    <link rel="shortcut icon" href="img/Aisonym Logo_white_bg_1.png">
+    <link rel="shortcut icon" href="favicon.ico">
 
     <link rel="stylesheet" href="css/normalize.css" type="text/css">
     <link rel="stylesheet" href="css/bootstrap.min.css" type="text/css">
@@ -413,6 +413,7 @@
                       <h2>Contact</h2>
                     </div>
 
+                    <!--<form id="contact_form1" class="contact-form1 contactusForm" method="post">-->
                     <form name="submit-to-google-sheet" class="contactusForm">
                       <div class="messages"></div>
 
@@ -495,44 +496,51 @@
     <!--<script src="js/jquery.googlemap.js"></script>-->
     <script src="js/validator.js"></script>
     <script src="js/main.js"></script>
+  <!--<script defer src="https://static.cloudflareinsights.com/beacon.min.js/vcd15cbe7772f49c399c6a5babf22c1241717689176015" integrity="sha512-ZpsOmlRQV6y907TI0dKBHq9Md29nnaEIPlkf84rnaERnq6zvWvPUqr2ft8M1aS28oN72PdrCzSjY4U6VaAw1EQ==" data-cf-beacon='{"rayId":"8a59cf4decf36f7e","version":"2024.7.0","r":1,"serverTiming":{"name":{"cfL4":true}},"token":"94b99c0576dc45bf9d669fb5e9256829","b":1}' crossorigin="anonymous"></script>-->
   
   
-    
-            <script>
-              const scriptURL = 'https://script.google.com/macros/s/AKfycbx1JofXqblOxFddLkFClF5DNMxZ4GfU8RoACn-oD9ja-sDZaYUOqeWQCrA_8jpiHGFZAg/exec'
-              const form = document.forms['submit-to-google-sheet']
+    <script>
+    	    /* ---------------------------------------------
+             Contact form
+             --------------------------------------------- */
             
-            
-            form.addEventListener('submit', e => {
-                e.preventDefault();
+        
+            $(document.body).on('submit','.contactusForm111', function (event) {
+                
+                event.preventDefault();
                 $('.form-msg').hide();
-                 $('.send_msg_btn').html('Message Sending ...');
+                
+                $('.send_msg_btn').html('Message Sending ...');
                 $('.send_msg_btn').prop("disabled", true);
-                fetch(scriptURL, { method: 'POST', body: new FormData(form)})
-                  .then((response) => {
-                      if(response.status==200){
-                         $('.form-msg').html('<div class="alert alert-success"> <strong>Form Sent!</strong> We will contact you shortly. Thank you</div>');
-                         $('.contactusForm').get(0).reset();
-                         
-                            $('.form-msg').show();
-                            $('.form-msg').delay(10000).fadeOut();
-                            $('.send_msg_btn').prop("disabled", false);
-                            $('.send_msg_btn').html('Send Message');
-                      }else{
-                          $('.form-msg').html('<div class="alert alert-danger"> <strong>Failed!</strong> Try again.</div>'); 
-                      }
-                    //   console.log(response.status);
-                    })
-                  .catch(function(error) {
-                              $('.form-msg').html('<div class="alert alert-danger"> <strong>Failed!</strong> Try again.</div>');
-                              
-                                $('.send_msg_btn').prop("disabled", false);
-                                // $('.send_msg_btn').html('Send Message <i class="mi-arrow-right size-18 align-middle"></i>');
-                                $('.send_msg_btn').html('Send Message');
-                            })
-              })
-
-            </script>
+                $.ajax({
+                    type: "POST",
+                    data: $(this).serialize(),
+                    url: "process.php",
+                })
+                .done(function(data) {
+                    console.log(data);
+                    var obj = $.parseJSON(data);
+                    if (obj['status']==1) {
+                        $('.contactusForm').get(0).reset();
+                    }
+                    $('.form-msg').html(obj['msg']);
+                    $('.form-msg').show();
+                    $('.form-msg').delay(10000).fadeOut();
+                    $('.send_msg_btn').prop("disabled", false);
+                    $('.send_msg_btn').html('Send Message');
+                })
+                .fail(function() {
+                    console.log("error");
+                })
+                .always(function() {
+                    // $('.errorform', $contactform).fadeIn();
+                    $('.send_msg_btn').prop("disabled", false);
+                    // $('.send_msg_btn').html('Send Message <i class="mi-arrow-right size-18 align-middle"></i>');
+                    $('.send_msg_btn').html('Send Message');
+                });
+    
+            });
+    	</script>
   
 </body>
 
